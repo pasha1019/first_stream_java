@@ -1,17 +1,21 @@
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+// Аннотации JUnit Jupiter: @Test, @Tag, @BeforeEach, @AfterEach, @DisplayName
+import org.junit.jupiter.api.*;
+// Параметризованные тесты и источник данных в формате CSV
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+// Потоки для подмены стандартного ввода/вывода в тестах
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+// Исключение, которое ожидаем при вводе не-числа
 import java.util.InputMismatchException;
 
+// Статические assert-методы: assertTrue, assertThrows, assertNotNull
 import static org.junit.jupiter.api.Assertions.*;
 
+// Тесты для класса Calc: проверяем вывод при сложении и обработку ошибки ввода
 public class CalcTest {
 
     // Сохраняем исходные потоки ввода/вывода, чтобы вернуть их после каждого теста
@@ -36,6 +40,9 @@ public class CalcTest {
 
     // Параметризованный тест: каждая строка CsvSource — это входные a, b и ожидаемая сумма
     @ParameterizedTest
+    // Тег "smoke": позволяет запускать только быстрые базовые тесты (./gradlew test -PincludeTags=smoke)
+    @Tag("smoke")
+    @DisplayName("Сложение двух валидных чисел")
     @CsvSource({
             "5, 3, 8",                        // обычные положительные числа
             "-10, 4, -6",                     // отрицательное первое число
@@ -55,6 +62,7 @@ public class CalcTest {
 
     // Проверка ошибки: ввод не-числа (дробного)
     @Test
+    @DisplayName("Проверка ошибки")
     public void testAdditionWithFloatNumbers_throwsException() {
         // "2.5" не является целым, поэтому Scanner.nextInt() должен выбросить исключение
         String input = "6\n2.5\n";

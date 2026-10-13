@@ -1,21 +1,41 @@
+// Подключаем стандартный Java-плагин: компиляция, тесты, jar
 plugins {
     id 'java'
 }
 
+// Координаты артефакта сборки
 group = 'org.example'
 version = '1.0-SNAPSHOT'
 
+// Компиляция/тесты всегда на JDK 17, независимо от java из PATH
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+// Откуда Gradle скачивает зависимости
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    // BOM фиксирует согласованные версии всех модулей JUnit 5
     testImplementation platform('org.junit:junit-bom:6.0.0')
+    // Основной API JUnit Jupiter (аннотации @Test, @BeforeEach и т.д.)
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    // Параметризованные тесты (@ParameterizedTest, @CsvSource)
     testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    // Launcher нужен Gradle для запуска тестов на платформе JUnit
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+// Запускаем тесты через платформу JUnit 5
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        // Если передан -PincludeTags=smoke, запускаем только тесты с этим тегом
+        if (project.hasProperty('includeTags')) {
+            includeTags project.property('includeTags')
+        }
+    }
 }
