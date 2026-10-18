@@ -90,6 +90,16 @@ public class CalcTest {
     public void testGreetingWithName() {
         String output = runMain("Иван\n1\n2\n");
         assertTrue(output.contains("Привет, Иван"));
+        assertTrue(output.contains("Давно не виделись!"));
+    }
+
+    @Test
+    @Tag("smoke")
+    @DisplayName("Приветствие с именем")
+    public void testGreetingWithAnotherName() {
+        String output = runMain("Пётр\n1\n2\n");
+        assertTrue(output.contains("Привет, Пётр"));
+        assertFalse(output.contains("Давно не виделись!"));
     }
 
     @Test
