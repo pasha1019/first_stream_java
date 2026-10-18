@@ -1,8 +1,11 @@
 // Подключаем стандартный Java-плагин: компиляция, тесты, jar
 plugins {
     id 'java'
+    id 'application'
 }
-
+application {
+    mainClass = 'Calc'
+}
 // Координаты артефакта сборки
 group = 'org.example'
 version = '1.0-SNAPSHOT'
