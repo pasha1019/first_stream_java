@@ -51,7 +51,7 @@ public class CalcTest {
     })
     public void testAddition(int a, int b, int expected) {
         // Формируем ввод построчно так, как его ожидает Scanner (a, затем b)
-        String input = a + "\n" + b + "\n";
+        String input = "Иван\n" + a + "\n" + b + "\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         Calc.main(new String[]{});
@@ -60,12 +60,18 @@ public class CalcTest {
         assertTrue(outputStream.toString().contains("Сумма чисел = " + expected));
     }
 
+    private String runMain(String input) {
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        Calc.main(new String[]{});
+        return outputStream.toString();
+    }
+
     // Проверка ошибки: ввод не-числа (дробного)
     @Test
     @DisplayName("Проверка ошибки")
     public void testAdditionWithFloatNumbers_throwsException() {
         // "2.5" не является целым, поэтому Scanner.nextInt() должен выбросить исключение
-        String input = "6\n2.5\n";
+        String input = "Иван\n6\n2.5\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         // Ожидаем, что main выбросит InputMismatchException
@@ -76,5 +82,29 @@ public class CalcTest {
 
         // Можно дополнительно проверить сообщение (зависит от версии JDK)
         assertNotNull(exception);
+    }
+
+    @Test
+    @Tag("smoke")
+    @DisplayName("Приветствие с именем")
+    public void testGreetingWithName() {
+        String output = runMain("Иван\n1\n2\n");
+        assertTrue(output.contains("Привет, Иван"));
+    }
+
+    @Test
+    @Tag("smoke")
+    @DisplayName("Пустое имя → гость")
+    public void testGreetingEmptyName() {
+        String output = runMain("\n1\n2\n");
+        assertTrue(output.contains("Привет, гость!"));
+    }
+
+    @Test
+    @Tag("smoke")
+    @DisplayName("Имя из пробела → гость")
+    public void testGreetingWhitespaceName() {
+        String output = runMain(" \n1\n2\n");
+        assertTrue(output.contains("Привет, гость!"));
     }
 }
