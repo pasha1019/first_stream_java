@@ -95,7 +95,7 @@ public class CalcTest {
 
     @Test
     @Tag("smoke")
-    @DisplayName("Приветствие с именем")
+    @DisplayName("Приветствие с другим именем")
     public void testGreetingWithAnotherName() {
         String output = runMain("Пётр\n1\n2\n");
         assertTrue(output.contains("Привет, Пётр"));
