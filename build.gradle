@@ -32,7 +32,7 @@ dependencies {
 // Запускаем тесты через платформу JUnit 5
 test {
     useJUnitPlatform {
-        // Если передан -PincludeTags=smoke, запускаем только тесты с этим тегом
+        // Если передан -PincludeTags=unit, запускаем только тесты с этим тегом
         if (project.hasProperty('includeTags')) {
             includeTags project.property('includeTags')
         }
