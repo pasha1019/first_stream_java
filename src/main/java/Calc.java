@@ -1,6 +1,11 @@
+import java.math.BigDecimal;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Calc {
+    // Целое число в текстовом виде: необязательный знак + цифры
+    private static final Pattern INTEGER_LITERAL = Pattern.compile("[+-]?\\d+");
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -55,6 +60,18 @@ public class Calc {
         while (true) {
             System.out.print(prompt);
             String line = scanner.nextLine().trim();
+
+            // Ввод не похож на целое число: уточняем, число это вовсе или просто «не целое»
+            if (!INTEGER_LITERAL.matcher(line).matches()) {
+                if (isNumber(line)) {
+                    // Число есть, но оно не целое (например, 2.5) → в int не помещается
+                    System.out.println("Ошибка: число вне допустимого диапазона");
+                } else {
+                    System.out.printf("Ошибка: \"%s\" не является числом%n", line);
+                }
+                continue;
+            }
+
             try {
                 long value = Long.parseLong(line); // парсим как long, чтобы поймать большие числа
                 if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
@@ -63,9 +80,19 @@ public class Calc {
                 }
                 return (int) value;
             } catch (NumberFormatException e) {
-                // Сюда попадают и буквы, и числа длиннее long (например, 999...999)
+                // Сюда попадают числа длиннее long (например, 999...999)
                 System.out.println("Ошибка: число вне допустимого диапазона");
             }
+        }
+    }
+
+    // Проверяет, является ли строка числом в любом виде (в том числе дробным)
+    private static boolean isNumber(String line) {
+        try {
+            new BigDecimal(line);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 }

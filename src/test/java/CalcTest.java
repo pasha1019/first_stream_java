@@ -89,11 +89,11 @@ public class CalcTest {
     // Проверка ошибки: мусор вместо числа — программа не падает, а просит ввод заново
     @ParameterizedTest
     @Tag("smoke")
-    @DisplayName("Мусор в числе → ошибка и повторный запрос")
+    @DisplayName("Не целое число → ошибка и повторный запрос")
     @CsvSource({
             "0, 6, 2.5, 7, 13",                // дробное
-            "1, 10, abc, 4, 6",                // буквы (вычитание: 10 - 4)
-            "0, 0, 2147483648, 1, 1"           // вылезает за int
+            "0, 0, 2147483648, 1, 1",          // вылезает за int
+            "0, 0, 99999999999999999999999999, 1, 1"  // не влезает даже в long
     })
     public void testAdditionWithFloatNumber_repromptsAndContinues(
             int op, int a, String badInput, int retry, int expected) {
@@ -101,6 +101,26 @@ public class CalcTest {
         String output = runMain(input);
 
         assertTrue(output.contains("Ошибка: число вне допустимого диапазона"));
+        String prefix = (op == 0) ? "Сумма чисел = " : "Разность чисел = ";
+        assertTrue(output.contains(prefix + expected));
+    }
+
+    // Проверка ошибки: буквы вместо числа — сообщаем, что это не число, и просим ввод заново
+    @ParameterizedTest
+    @Tag("smoke")
+    @DisplayName("Буквы в числе → «не является числом» и повторный запрос")
+    @CsvSource({
+            "0, 10, abc, 4, 14",               // сложение: 10 + 4
+            "1, 10, Abc, 4, 6",                // вычитание: 10 - 4
+            "0, 10, 12abc, 4, 14"              // цифры с буквами вперемешку
+    })
+    public void testLettersInput_reportsNotANumber(
+            int op, int a, String badInput, int retry, int expected) {
+        String input = "Иван\n" + op + "\n" + a + "\n" + badInput + "\n" + retry + "\n";
+        String output = runMain(input);
+
+        assertTrue(output.contains("Ошибка: \"" + badInput + "\" не является числом"));
+        assertFalse(output.contains("Ошибка: число вне допустимого диапазона"));
         String prefix = (op == 0) ? "Сумма чисел = " : "Разность чисел = ";
         assertTrue(output.contains(prefix + expected));
     }
