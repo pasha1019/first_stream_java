@@ -28,67 +28,69 @@ public class Calc {
             System.out.printf("Давно не виделись!%n");
         }
 
-        // Выбор операции: 0 — сложение, 1 — вычитание; всё остальное → повторный запрос
-        int op;
-        while (true) {
-            System.out.print("Выберите операцию: сложение(0) или вычитание(1): ");
-            String operation = scanner.nextLine().trim();
-            try {
-                // parseInt бросает NumberFormatException на нечисловом вводе
-                op = Integer.parseInt(operation);
-                if (op == 0 || op == 1) break; // break — выход из бесконечного цикла
-                System.out.println("Нужно ввести 0 или 1");
-            } catch (NumberFormatException e) {
-                // Исключение перехвачено — программа продолжает работать
-                System.out.println("Это не число, попробуйте снова");
-            }
-        }
+        // Выбор операции: +, -, *, /, %
+        System.out.print("Введите операцию (+, -, *, /, %): ");
+        // Читаем строку целиком, но берём только первый символ — это char, примитивный тип
+        String opLine = scanner.nextLine().trim();
+        // charAt(0) на пустой строке бросил бы исключение, поэтому подставляем заведомо неизвестный символ
+        char op = opLine.isEmpty() ? ' ' : opLine.charAt(0);
 
         // Два операнда: readInt сам переспрашивает при мусорном вводе
         int a = readInt(scanner, "Введите первое число: ");
         int b = readInt(scanner, "Введите второе число: ");
 
-        // Считаем и выводим результат выбранной операции.
+        // Считаем результат выбранной операции.
         // Считаем в long: int переполняется (MAX_VALUE + 1 → MIN_VALUE), long — нет.
         // Приводим левый операнд — тогда всё выражение считается в long
-        if (op == 0) {
-            long sum = (long) a + b;
-            printResult("Сумма чисел", sum, isIntOverflowSum(a, b));
-        } else {
-            long difference = (long) a - b;
-            printResult("Разность чисел", difference, isIntOverflowDifference(a, b));
+        long result;
+        switch (op) {
+            case '+':
+                result = (long) a + b;
+                break;
+            case '-':
+                result = (long) a - b;
+                break;
+            case '*':
+                result = (long) a * b; // произведение переполнило бы int так же, как сумма
+                break;
+            case '/':
+                // Проверяем делитель сами: у int деление на ноль бросило бы ArithmeticException,
+                // у double получился бы Infinity — нам нужен понятный текст ошибки
+                if (b == 0) {
+                    System.out.println("Ошибка: деление на ноль");
+                    return; // завершаем программу
+                }
+                // Целочисленное деление: 10 / 3 == 3, дробная часть отбрасывается
+                result = (long) a / b;
+                break;
+            case '%':
+                // Остаток от деления на ноль считать тоже нельзя
+                if (b == 0) {
+                    System.out.println("Ошибка: деление на ноль");
+                    return;
+                }
+                // Знак остатка берётся у делимого: -7 % 2 == -1
+                result = (long) a % b;
+                break;
+            default:
+                // Операция не известна — сообщаем и завершаемся
+                System.out.printf("Ошибка: неизвестная операция \"%s\"%n", opLine);
+                return;
         }
+
+        printResult(result);
 
         scanner.close();
     }
 
-    // Проверяет, помещается ли сумма в int: addExact бросает ArithmeticException при переполнении
-    private static boolean isIntOverflowSum(int a, int b) {
-        try {
-            Math.addExact(a, b);
-            return false;
-        } catch (ArithmeticException e) {
-            return true;
-        }
-    }
-
-    // То же для вычитания: subtractExact бросает ArithmeticException при переполнении
-    private static boolean isIntOverflowDifference(int a, int b) {
-        try {
-            Math.subtractExact(a, b);
-            return false;
-        } catch (ArithmeticException e) {
-            return true;
-        }
-    }
-
     // Печатает результат; если он не помещается в int — предупреждаем, но результат всё равно выводим
-    private static void printResult(String label, long value, boolean overflow) {
-        if (overflow) {
-            System.out.printf("Внимание: %s не помещается в int, результат вычислен в long%n", label);
+    private static void printResult(long value) {
+        // Проверяем границы int: результат считался в long, но он всё равно может быть больше
+        if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
+            System.out.printf("Внимание: Результат не помещается в int, результат вычислен в long%n");
         }
-        // long печатается без суффикса L, поэтому «Сумма чисел = 2147483647» выглядит как раньше
-        System.out.println(label + " = " + value);
+        // long печатается без суффикса L, поэтому «Результат = 2147483647» выглядит как обычное число
+        System.out.println("Результат = " + value);
     }
 
     // Читает целое число из консоли с проверкой:
