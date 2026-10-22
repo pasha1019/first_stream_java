@@ -7,6 +7,10 @@
 - `src/main/java/ConvertFeetInches.java` — таблица «дюймы → метры» от 1 до 100.
 - `src/main/java/GalToLitTable.java` — таблица «галлоны → литры» от 1 до 100.
 - `src/main/java/Weight0nMoon.java` — пересчёт веса с Земли на Луну.
+- `src/main/java/LogicalOpTable.java` — таблица истинности для AND, OR, XOR и NOT.
+- `src/main/java/OnlySimpleNumbers.java` — простые числа от 2 до 100.
+- `src/main/java/CharArithm.java` — арифметика над `char` (`X` → `Y`, `90` → `Z`).
+- `src/main/java/Sound.java` — расстояние до вспышки молнии и хлопка в ладоши.
 - `src/test/java/CalcTest.java` — JUnit 5-тесты для `Calc`.
 
 ## Калькулятор
@@ -47,6 +51,10 @@
 - **`ConvertFeetInches`** — печатает таблицу от 1 до 100 дюймов и соответствующие метры; каждые 12 строк вставляется пустая строка, чтобы группы таблицы читались отдельно.
 - **`GalToLitTable`** — печатает таблицу от 1 до 100 галлонов и соответствующие литры; пустая строка вставляется каждые 10 строк.
 - **`Weight0nMoon`** — спрашивает вес на Земле (кг) и печатает вес на Луне: сила притяжения там примерно в 6 раз меньше, поэтому вес равен 17% земного.
+- **`LogicalOpTable`** — печатает таблицу истинности для `&`, `|`, `^` и `!`. Значения перебираются вложенным циклом `for` по массиву `boolean[] {true, false}`, поэтому выводятся все 4 комбинации `P`/`Q`. Значения `true`/`false` печатаются как `1`/`0` (тернарный оператор `(x ? 1 : 0)`).
+- **`OnlySimpleNumbers`** — печатает все простые числа от 2 до 100. Для каждого числа перебираются все возможные делители (`x % y == 0`) и считается их количество; простое число имеет ровно 2 делителя (1 и оно само).
+- **`CharArithm`** — показывает, что `char` можно инкрементировать (`'X'` → `'Y'`) и присваивать ему числовой код (`90` → `'Z'`).
+- **`Sound`** — считает расстояние до вспышки молнии: скорость звука 1100 футов в секунду, вспышка видна через 7.2 секунды, а хлопок в ладоши слышен на половине расстояния.
 
 ## Требования
 - Java 17
@@ -61,6 +69,10 @@ java -cp build/classes/java/main Calc                # калькулятор �
 java -cp build/classes/java/main ConvertFeetInches    # таблица дюймов в метрах
 java -cp build/classes/java/main GalToLitTable        # таблица галлонов в литрах
 java -cp build/classes/java/main Weight0nMoon         # вес на Луне
+java -cp build/classes/java/main LogicalOpTable       # таблица истинности
+java -cp build/classes/java/main OnlySimpleNumbers    # простые числа до 100
+java -cp build/classes/java/main CharArithm           # арифметика над char
+java -cp build/classes/java/main Sound                # расстояние до молнии
 ```
 
 Примеры, где нужен ввод, можно запускать с пайпом:
